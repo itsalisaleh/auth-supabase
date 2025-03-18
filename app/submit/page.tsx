@@ -10,7 +10,6 @@ const supabase = createClientComponentClient();
 export default function SubmitPage() {
   
   const [id,setID] = useState("");
-  const [userRole, setUserRole] = useState<string | null>(null);
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [location, setLocation] = useState("");
@@ -38,13 +37,13 @@ export default function SubmitPage() {
           .eq("id", userId)
           .single();
           
-          
+        if(error) {
+          setError(error.message);
+        }
         if (data?.role !== "developer") {
           
           router.push("/unauthorized");
-        } else {
-          setUserRole(data.role);
-        }
+        } 
       } else {
         router.push("/login");
       }
@@ -102,9 +101,14 @@ export default function SubmitPage() {
       ]);
       alert("Submission successful!");
       router.push("/thank-you");
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || "An unknown error occurred.");
+    } catch (err) {
+      if(err instanceof Error){
+        
+        setError(err.message || "An unknown error occurred.");
+      }else {
+        setError("An unknown error occurred.");
+      }
+      
       
     }
     setLoading(false);

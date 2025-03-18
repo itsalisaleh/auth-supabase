@@ -46,6 +46,10 @@ export default function LoginPage() {
       .eq("id", userId)
       .single();
 
+      if(userError) {
+        setError(userError.message);
+      }
+
     //the user role
     const userRole = userData?.role;
     

@@ -23,10 +23,10 @@ type Feedback = {
 const EvaluatePage = () => {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [feedback, setFeedback] = useState<Feedback[]>([]);
-  const [role, setUserRole] = useState('');
   const [id, setID] = useState("");
   const [comments, setComments] = useState<{ [key: string]: string }>({}); // Track comments by submission ID
   const [loading, setLoading] = useState<{ [key: string]: boolean }>({}); // Track loading state by submission ID
+  const [error,setError] = useState(""); 
   const router = useRouter();
 
   useEffect(() => {
@@ -41,11 +41,13 @@ const EvaluatePage = () => {
           .select("role")
           .eq("id", userId)
           .single();
+
+        if(error) {
+          setError(error.message);
+        }
         if (data?.role !== "evaluator") {
           router.push("/unauthorized");
-        } else {
-          setUserRole(data.role);
-        }
+        } 
       } else {
         router.push("/login");
       }
@@ -221,6 +223,7 @@ const EvaluatePage = () => {
           </div>
         ))}
       </div>
+      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
     </div>
   );
 };
