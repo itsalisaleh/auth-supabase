@@ -62,8 +62,13 @@ export default function SubmitPage() {
         const objectUrl = URL.createObjectURL(compressedFile);
         setProfilePicPreview(objectUrl);
         
-      } catch (error) {
-        setError("Error compressing image.");
+      } catch (err) {
+        if(err instanceof Error) {
+          setError(err.message);
+        }
+        else {
+          setError("failed to compress the image");
+        }
       }
     }
   };
@@ -104,7 +109,7 @@ export default function SubmitPage() {
     } catch (err) {
       if(err instanceof Error){
         
-        setError(err.message || "An unknown error occurred.");
+      setError(err.message || "An unknown error occurred.");
       }else {
         setError("An unknown error occurred.");
       }
