@@ -1,16 +1,30 @@
-import { serve } from "https://deno.land/std@0.224.0/http/server.ts"; // Keep this import
+function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   try {
-    const { to, subject, message } = await req.json();
-    
+    const brevoApiKey = Deno.env.get("BREVO_API_KEY");
+    if (!brevoApiKey) {
+      return new Response(JSON.stringify({ error: "API key not found" }), { status: 500 });
+    }
+
+    let requestData;
+    try {
+      requestData = await req.json();
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid JSON format" }), { status: 400 });
+    }
+
+    const { to, subject, message } = requestData;
+
     if (!to || !subject || !message) {
       return new Response(JSON.stringify({ error: "Missing fields" }), { status: 400 });
     }
 
-    const brevoApiKey = Deno.env.get("BREVO_API_KEY");
-    if (!brevoApiKey) {
-      return new Response(JSON.stringify({ error: "API key not found" }), { status: 500 });
+    if (!isValidEmail(to)) {
+      return new Response(JSON.stringify({ error: "Invalid email format" }), { status: 400 });
     }
 
     const response = await fetch("https://api.brevo.com/v3/smtp/email", {
@@ -20,7 +34,7 @@ serve(async (req) => {
         "api-key": brevoApiKey,
       },
       body: JSON.stringify({
-        sender: { name: "Your App", email: "your-email@example.com" },
+        sender: { name: "Your App", email: Deno.env.get("SENDER_EMAIL") || "your-email@example.com" },
         to: [{ email: to }],
         subject,
         htmlContent: `<p>${message}</p>`,
@@ -29,11 +43,12 @@ serve(async (req) => {
 
     const result = await response.json();
     if (!response.ok) {
-      return new Response(JSON.stringify({ error: result }), { status: 400 });
+      return new Response(JSON.stringify({ error: result }), { status: response.status });
     }
 
     return new Response(JSON.stringify({ success: "Email sent successfully!" }), { status: 200 });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : "Internal server error";
+    return new Response(JSON.stringify({ error: errorMessage }), { status: 500 });
   }
 });
