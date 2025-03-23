@@ -1,7 +1,7 @@
 {
     "functions": {
       "api/send-email.ts": {
-        "runtime": "vercel-deno@latest" 
+        "runtime": "now-php@1.0.0" 
       }
     },
     "build": {
