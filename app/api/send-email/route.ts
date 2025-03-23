@@ -1,39 +1,49 @@
-import { NextResponse } from 'next/server';
+export const runtime = "edge"; // Enables Vercel Edge Runtime (No Node.js, No Deno)
 
 export async function POST(req: Request) {
-  const { to, subject, message } = await req.json();
-
   try {
-    // Use Brevo API to send the email
-    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST',
+    const { to, subject, message } = await req.json();
+
+    if (!to || !subject || !message) {
+      return new Response(JSON.stringify({ error: "Missing fields" }), { status: 400 });
+    }
+
+    // Get API Key from Vercel Environment Variables
+    const brevoApiKey = process.env.BREVO_API_KEY;
+    if (!brevoApiKey) {
+      return new Response(JSON.stringify({ error: "API key not found" }), { status: 500 });
+    }
+
+    // Validate email format
+    const isValidEmail = (email: string) =>
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    if (!isValidEmail(to)) {
+      return new Response(JSON.stringify({ error: "Invalid email format" }), { status: 400 });
+    }
+
+    // Send email via Brevo API
+    const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'api-key': process.env.BREVO_API_KEY as string,
+        "Content-Type": "application/json",
+        "api-key": brevoApiKey,
       },
       body: JSON.stringify({
-        sender: { email: 'foradsenceali@gmail.com' }, // Replace with your email
+        sender: { name: "Your App", email:  "foradsenceali@gmail.com" },
         to: [{ email: to }],
-        subject: subject,
-        htmlContent: `<html><body><p>${message}</p></body></html>`,
+        subject,
+        htmlContent: `<p>${message}</p>`,
       }),
     });
 
     const result = await response.json();
+    if (!response.ok) {
+      return new Response(JSON.stringify({ error: result }), { status: response.status });
+    }
 
-    if (response.ok) {
-      return NextResponse.json(result, { status: 200 });
-    } else {
-      return NextResponse.json({ error: result.error || 'Failed to send email' }, { status: 400 });
-    }
-  } catch (error: unknown) {
-    // Handle error properly
-    if (error instanceof Error) {
-      // Now 'error' is of type 'Error', and we can access its properties safely
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    } else {
-      // Fallback in case the error is not an instance of Error
-      return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
-    }
+    return new Response(JSON.stringify({ success: "Email sent successfully!" }), { status: 200 });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Internal server error" }), { status: 500 });
   }
 }
