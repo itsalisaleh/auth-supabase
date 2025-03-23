@@ -1,0 +1,14 @@
+{
+    "build": {
+      "env": {
+        "DENO_VERSION": "0.224.0" 
+      },
+      "command": "curl -fsSL https://deno.land/x/install/install.sh | sh && deno cache ./supabase/functions/send-email/index.ts"
+    },
+    "routes": [
+      {
+        "src": "/api/(.*)",
+        "dest": "/supabase/functions/send-email/index.ts"
+      }
+    ]
+  }
