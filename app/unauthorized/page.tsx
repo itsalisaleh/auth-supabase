@@ -10,11 +10,16 @@ const Unauthorized = () => {
   };
 
   return (
-    <div className="p-4">
-      <h1>You cant access this page!</h1>
-      <button onClick={handleClick} className="bg-blue-500 cursor-pointer text-white px-4 py-2">
-        Return to login page
-      </button>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-900 to-gray-800 p-6">
+      <div className="text-center p-8 bg-white/20 backdrop-blur-md rounded-2xl shadow-lg max-w-md w-full">
+        <h1 className="text-3xl font-bold text-white mb-6">You can't access this page!</h1>
+        <button
+          onClick={handleClick}
+          className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-xl shadow-md hover:bg-blue-600 transition duration-300"
+        >
+          Return to Login Page
+        </button>
+      </div>
     </div>
   );
 };

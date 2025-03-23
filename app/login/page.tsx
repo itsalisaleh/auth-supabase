@@ -18,6 +18,8 @@ export default function LoginPage() {
     e.preventDefault(); // Prevent form submission refresh
     setIsLoading(true); // Start loading
 
+   
+
     // Validate inputs
     if (!email || !password) {
       setError('Please fill in all fields.');
@@ -69,40 +71,60 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-2xl font-bold mb-4">Login</h1>
-      <form onSubmit={handleLogin} className="w-80 space-y-4">
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
-        />
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value as 'developer' | 'evaluator')}
-          className="w-full p-2 border border-gray-300 rounded"
-        >
-          <option value="developer">developer</option>
-          <option value="evaluator">evaluator</option>
-        </select>
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-blue-300"
-        >
-          {isLoading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
-      {error && <p className="text-red-500 mt-4">{error}</p>}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+      <div className="w-96 p-8 bg-white/10 backdrop-blur-lg border border-gray-500 shadow-xl rounded-2xl">
+        <h1 className="text-3xl font-bold text-white text-center mb-6">Login</h1>
+  
+        <form onSubmit={handleLogin} className="space-y-4">
+          {/* Email Input */}
+          <input
+            type="email"
+            placeholder="📧 Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-3 bg-transparent border border-gray-400 text-white rounded-lg focus:ring-2 focus:ring-purple-500 placeholder-gray-400"
+          />
+  
+          {/* Password Input */}
+          <input
+            type="password"
+            placeholder="🔑 Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 bg-transparent border border-gray-400 text-white rounded-lg focus:ring-2 focus:ring-purple-500 placeholder-gray-400"
+          />
+  
+          {/* Role Selection */}
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value as 'developer' | 'evaluator')}
+            className="w-full p-3 bg-transparent border border-gray-400 text-white rounded-lg focus:ring-2 focus:ring-purple-500"
+          >
+            <option value="developer" className="bg-gray-800 text-white">👨‍💻 Developer</option>
+            <option value="evaluator" className="bg-gray-800 text-white">🔍 Evaluator</option>
+          </select>
+  
+          {/* Login Button */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-3 bg-purple-500 text-white font-bold rounded-lg shadow-md hover:bg-purple-600 transition-transform transform hover:scale-105 disabled:bg-purple-300"
+          >
+            {isLoading ? (
+              <span className="flex items-center justify-center">
+                Logging in...
+                <div className="ml-2 w-4 h-4 border-2 border-white border-t-2 border-t-transparent rounded-full animate-spin"></div>
+              </span>
+            ) : (
+              '🚀 Login'
+            )}
+          </button>
+        </form>
+  
+        {/* Error Message */}
+        {error && <p className="text-red-400 text-center mt-4">{error}</p>}
+      </div>
     </div>
   );
+  
 }

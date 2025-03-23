@@ -28,7 +28,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
-        <h3 className="text-center">Developed by Ali Saleh</h3>
+        <h3 className="text-white bg-gradient-to-br from-gray-900 to-gray-800 p-6 text-center">Developed by Ali Saleh</h3>
       </body>
     </html>
   );
