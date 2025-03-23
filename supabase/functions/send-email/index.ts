@@ -1,4 +1,4 @@
-import { copy } from "https://deno.land/std@0.224.0/fs/copy.ts";// Correct Deno CDN path
+import { serve } from "https://deno.land/std@0.224.0/http/server.ts"; // Keep this import
 
 serve(async (req) => {
   try {
