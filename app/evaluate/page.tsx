@@ -162,7 +162,7 @@ const EvaluatePage = () => {
             }),
           });
 
-          const emailResult = await emailResponse.json();
+          
           if (emailResponse.ok) {
             setAlertMessage(`Email sent successfully to ${submission.email}.`); // Success alert
             setTimeout(() => setAlertMessage(null), 5000); // Clear after 5 seconds
